@@ -234,7 +234,7 @@ async function createMapChartConfig({ mapName, data, valueKey = 'confirmedCount'
   const config = {
     baseOption: {
       title: {
-        text: '全国新冠肺炎增长趋势',
+        text: '全国新冠肺炎发展趋势',
         // target: 'self',
         // bottom: '10',
         // left: '10',
