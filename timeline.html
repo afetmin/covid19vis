@@ -34,7 +34,8 @@
         padding-left: 60px;
       }
       .timeline-area {
-        width: 300px;
+        margin-top: 20px;
+        width: 400px;
         border-left: 2px solid #333;
         padding: 10px 30px;
       }
@@ -180,19 +181,17 @@
       $(that).parent().next().children().fadeIn(300);
     }
     // 渐出
-    function closeOverlay() {
-      $(".overlay").fadeOut();
-      $(".remark").fadeOut();
+    function closeOverlay(that) {
+      $(that).fadeOut();
+      $(that).children().fadeOut();
     }
     // 插入video
     function getvideo(video) {
       return `<video width="800" height="500" preload="none" controls>
-    <source src="${video}" type="video/mp4"></video>`
+    <source src="${video}" type="video/mp4"></video>`;
     }
-    // 获取写入数据
-    $.getJSON("data__asc_1.json", (data) => {
-      // console.log(data.data);
-      const timelines = data.data;
+    // 处理读入的数据
+    function handleData(timelines) {
       for (let i = 0, length = timelines.length; i < length; i++) {
         let { event, remark, video } = timelines[i];
         remark = remark ? remark : getvideo(video);
@@ -202,12 +201,28 @@
           `<div class="item">
             <p class="time">${timePoint}</p>
             <p class="content"><a href="javascript:;" onclick="overLay(this)">${event}</a></p>
-            <div class="overlay" onclick="closeOverlay()">
+            <div class="overlay" onclick="closeOverlay(this)">
               <div class="remark">${remark}</div>
               </div>
           </div>`
         );
         $timelineArea.append($newItem);
+      }
+    }
+    // 获取写入数据
+    $.getJSON("./timeline/data__asc_1.json", (data) => {
+      // console.log(data.data);
+      const timelines = data.data;
+      handleData(timelines);
+    });
+    let num = 2
+    $(window).scroll(function () {
+      if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
+        $.getJSON(`./timeline/data__asc_${num}.json`, (data) => {
+          const timelines = data.data;
+          handleData(timelines);
+          num++
+        });
       }
     });
   </script>
