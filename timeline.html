@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>时间线</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script
+      src="https://kit.fontawesome.com/0f93c0ab3e.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        text-decoration: none;
+      }
+      section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        transition: .3s;
+      }
+      .timeline {
+        width: 650px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        overflow-y: auto;
+        padding-left: 60px;
+      }
+      .timeline-area {
+        width: 300px;
+        border-left: 2px solid #333;
+        padding: 10px 30px;
+      }
+      .timeline-area .item {
+        position: relative;
+        background: #2ecc71;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        padding: 10px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        /* transition: 0.3s; */
+        cursor: pointer;
+      }
+      .timeline-area .item:hover {
+        /* box-shadow: 0 0 20px #2ecc71; */
+        animation: huxi 3s linear infinite;
+      }
+      @keyframes huxi {
+        0% {
+          box-shadow: 0 0 10px #2ecc71;
+        }
+        50% {
+          box-shadow: 0 0 30px #2ecc71;
+        }
+        100% {
+          box-shadow: 0 0 10px #2ecc71;
+        }
+      }
+      /* 线上的圆形 */
+      .timeline-area .item::before {
+        content: "";
+        display: block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #2ecc71;
+        border: 3px solid #333;
+        position: absolute;
+        z-index: 9;
+        top: 10px;
+        left: -39px;
+      }
+      /* 三角形 */
+      .timeline-area .item::after {
+        content: "";
+        width: 0;
+        height: 0;
+        border: 8px solid transparent;
+        border-right-color: #2ecc71;
+        position: absolute;
+        z-index: 99;
+        top: 10px;
+        left: -16px;
+      }
+      .timeline-area .item .time {
+        display: block;
+        position: absolute;
+        top: 6px;
+        left: -112px;
+      }
+      .timeline-area .item .content a {
+        display: block;
+        color: #fff;
+      }
+      .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #2f2e2e;
+        z-index: 999;
+        opacity: 0.9;
+      }
+      .remark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+        color: #fff;
+        background: #2ecc71;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px #2ecc71;
+        /* opacity: 1; */
+      }
+      .remark:hover {
+        animation: huxi 3s linear infinite;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="checkbox" id="check" />
+    <label for="check">
+      <i class="fas fa-bars" id="btn"></i>
+      <i class="fas fa-times" id="cancel"></i>
+    </label>
+    <div class="sidebar">
+      <header>新冠肺炎</header>
+      <ul>
+        <li>
+          <a href="/"><i class="fas fa-qrcode"></i>首页</a>
+        </li>
+        <li>
+          <a href="timeline.html"><i class="fas fa-link"></i>时间线</a>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-stream"></i>Overview</a>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-calendar-week"></i>Events</a>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-question-circle"></i>About</a>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-sliders-h"></i>Services</a>
+        </li>
+        <li>
+          <a href="#"><i class="fas fa-envelope"></i>Contact</a>
+        </li>
+      </ul>
+    </div>
+    <section>
+    <div class="timeline">
+      <div class="timeline-area"></div>
+    </div>
+  </section>
+  </body>
+  <script>
+    function timeToDate(time) {
+      let date = new Date(time);
+      let month = date.getMonth();
+      let day = date.getDate();
+      return `${month + 1}月${day}日`;
+    }
+    // console.log(timeToDate("2019-12-27 00:00:00"));
+    // 点击内容渐进
+    function overLay(that) {
+      $(that).parent().next().fadeIn(200);
+      $(that).parent().next().children().fadeIn(300);
+    }
+    // 渐出
+    function closeOverlay() {
+      $(".overlay").fadeOut();
+      $(".remark").fadeOut();
+    }
+    // 插入video
+    function getvideo(video) {
+      return `<video width="800" height="500" preload="none" controls>
+    <source src="${video}" type="video/mp4"></video>`
+    }
+    // 获取写入数据
+    $.getJSON("data__asc_1.json", (data) => {
+      // console.log(data.data);
+      const timelines = data.data;
+      for (let i = 0, length = timelines.length; i < length; i++) {
+        let { event, remark, video } = timelines[i];
+        remark = remark ? remark : getvideo(video);
+        const timePoint = timeToDate(timelines[i]["time_point"]);
+        const $timelineArea = $(".timeline-area");
+        $newItem = $(
+          `<div class="item">
+            <p class="time">${timePoint}</p>
+            <p class="content"><a href="javascript:;" onclick="overLay(this)">${event}</a></p>
+            <div class="overlay" onclick="closeOverlay()">
+              <div class="remark">${remark}</div>
+              </div>
+          </div>`
+        );
+        $timelineArea.append($newItem);
+      }
+    });
+  </script>
+</html>

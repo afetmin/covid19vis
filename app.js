@@ -236,8 +236,8 @@ async function createMapChartConfig({ mapName, data, valueKey = 'confirmedCount'
       title: {
         text: '全国新冠肺炎发展趋势',
         // target: 'self',
-        // bottom: '10',
-        // left: '10',
+        bottom: '10',
+        left: '15',
         subtext: mapDisplayMetrics === 'accum' ? getTextForKey('当前显示累计确诊') : getTextForKey('当前显示现存确诊'),
         sublink: `javascript:switchMapMetrics("${mapDisplayMetrics === 'accum' ? 'current' : 'accum'}")`,
         subtarget: 'self',
