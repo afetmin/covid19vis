@@ -323,8 +323,9 @@ async function createMapChartConfig({ mapName, data, valueKey = 'confirmedCount'
           type: 'map',
           mapType: mapName,
           label: {
-            show: !hideBarChart,
+            show: true,
           },
+          roam:true,
           left: hideBarChart ? 'center' : '30%',
           tooltip: {
             formatter: ({ name, data }) => {
